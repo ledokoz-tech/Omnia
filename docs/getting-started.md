@@ -35,8 +35,8 @@ cd Omnia
 ```bash
 sudo apt update
 sudo apt install build-essential cmake ninja-build \
-                 libgtk-3-dev libwebkit2gtk-4.0-dev \
-                 libappindicator3-dev librsvg2-dev \
+                 libgtk-3-dev libwebkit2gtk-4.1-dev \
+                 libayatana-appindicator3-dev librsvg2-dev \
                  libasound2-dev
 ```
 
