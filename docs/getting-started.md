@@ -8,12 +8,6 @@ Before you begin, ensure you have the following installed:
 
 ### Required
 
-- **Rust**: Version 1.72 or higher
-
-  ```bash
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-  ```
-
 - **C++ Compiler**: C++17 compatible compiler
   - **Linux**: GCC 9+ or Clang 10+
   - **macOS**: Xcode Command Line Tools (Clang)
@@ -23,6 +17,7 @@ Before you begin, ensure you have the following installed:
 
 - **CMake**: Version 3.16 or higher
 - **Ninja** (optional, recommended for faster builds)
+- **Git**: For cloning the repository
 
 ## Installation
 
@@ -61,62 +56,84 @@ brew install cmake ninja
 ### 3. Build Omnia
 
 ```bash
-# Build in debug mode
-cargo build
+# Create build directory
+mkdir build && cd build
 
-# Build in release mode (recommended for production)
-cargo build --release
+# Configure with CMake
+cmake .. -DCMAKE_BUILD_TYPE=Release
+
+# Build the library
+cmake --build . --config Release
 ```
 
 ## Your First Omnia Application
 
-Create a new Rust project:
+Create a new C++ project:
 
 ```bash
-cargo new hello-omnia
+mkdir hello-omnia
 cd hello-omnia
 ```
 
-Add Omnia to your `Cargo.toml`:
+Create a `CMakeLists.txt` file:
 
-```toml
-[dependencies]
-omnia = { git = "https://github.com/ledokoz-tech/Omnia.git" }
+```cmake
+cmake_minimum_required(VERSION 3.16)
+project(HelloOmnia VERSION 1.0.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Add Omnia library (adjust path as needed)
+add_subdirectory(path/to/omnia ${CMAKE_BINARY_DIR}/omnia)
+
+# Create executable
+add_executable(hello_omnia main.cpp)
+target_link_libraries(hello_omnia PRIVATE omnia)
 ```
 
-Create your first application in `src/main.rs`:
+Create your first application in `main.cpp`:
 
-```rust
-use omnia::prelude::*;
+```cpp
+#include <omnia/omnia.hpp>
 
-fn main() {
-    App::new("Hello Omnia")
-        .window(Window::new()
-            .title("My First Omnia App")
-            .size(400, 300)
-            .child(
-                VStack::new()
-                    .spacing(16.0)
-                    .children([
-                        Text::new("Hello, Omnia!")
-                            .font_size(24.0)
-                            .bold(true)
-                            .into(),
-                        Button::new("Click me!")
-                            .on_click(|_| {
-                                println!("Button clicked!");
-                            })
-                            .into(),
-                    ])
-            ))
-        .run();
+int main() {
+    omnia::App app("Hello Omnia");
+
+    auto window = omnia::Window::create()
+        .title("My First Omnia App")
+        .size(400, 300);
+
+    // Create UI components
+    auto title_text = omnia::Text::create("Hello, Omnia!")
+        .font_size(24.0f)
+        .bold(true);
+
+    auto button = omnia::Button::create("Click me!")
+        .on_click([]() {
+            std::cout << "Button clicked!" << std::endl;
+        });
+
+    // Create layout
+    auto vstack = omnia::VStack::create()
+        .spacing(16.0f)
+        .add_child(title_text)
+        .add_child(button);
+
+    window.set_child(vstack);
+    app.add_window(window);
+
+    return app.run();
 }
 ```
 
-Run your application:
+Build and run your application:
 
 ```bash
-cargo run
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake --build . --config Release
+./hello_omnia
 ```
 
 ## Project Structure
@@ -125,15 +142,17 @@ A typical Omnia project looks like this:
 
 ```shell
 my-omnia-app/
-├── Cargo.toml
+├── CMakeLists.txt       # CMake build configuration
 ├── src/
-│   ├── main.rs          # Application entry point
-│   ├── app.rs           # Main application logic
+│   ├── main.cpp         # Application entry point
+│   ├── app.cpp          # Main application logic
+│   ├── app.hpp
 │   ├── ui/              # UI components and views
-│   │   ├── mod.rs
-│   │   └── main_view.rs
+│   │   ├── main_view.cpp
+│   │   └── main_view.hpp
 │   └── models/          # Data models
-│       └── mod.rs
+│       ├── user_model.cpp
+│       └── user_model.hpp
 └── assets/              # Static assets (images, fonts, etc.)
 ```
 
@@ -190,14 +209,14 @@ error: failed to run custom build command for `omnia v0.1.0`
 
 ### Development
 
-- Use `cargo run` for quick iteration
-- Enable debug features with `cargo build`
+- Build with `cmake --build .` for quick iteration
+- Use `CMAKE_BUILD_TYPE=Debug` for debug features
 - Hot reload is enabled by default in debug mode
 
 ### Production
 
-- Build with `cargo build --release`
-- Optimize binary size with `cargo build --release --strip`
+- Build with `CMAKE_BUILD_TYPE=Release`
+- Enable link-time optimization with `CMAKE_INTERPROCEDURAL_OPTIMIZATION=ON`
 - Consider code signing for distribution
 
 ---

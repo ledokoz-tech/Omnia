@@ -1,15 +1,15 @@
 # Omnia
 
-Omnia is a high-performance, cross-platform GUI framework for Rust developers, powered by a fast C++ core. It enables you to create modern desktop and mobile applications effortlessly. Inspired by Tauri and Flutter, Omnia focuses on **maximum platform coverage, high performance, and developer-friendly APIs**.
+Omnia is a high-performance, cross-platform GUI framework for C++ developers. It enables you to create modern desktop and mobile applications effortlessly. Inspired by modern GUI frameworks, Omnia focuses on **maximum platform coverage, high performance, and developer-friendly APIs**.
 
 ---
 
 ## Features
 
 - **Cross-platform support**: Windows, macOS, Linux, Android, iOS
-- **Rust-first API**: Safe, modern Rust interface with a C++ backend
+- **Modern C++ API**: Clean, modern C++17 interface
 - **High performance**: GPU-accelerated rendering and fast input handling
-- **Declarative GUI**: Build interfaces in a Tauri/Flutter-like style
+- **Declarative GUI**: Build interfaces in a modern, intuitive style
 - **Plugin system**: Easily extendable with custom components
 - **Hot reload**: Instant preview during development
 - **Extra features**: Notifications, storage, media support, and more
@@ -20,36 +20,50 @@ Omnia is a high-performance, cross-platform GUI framework for Rust developers, p
 
 ### Prerequisites
 
-- Rust >= 1.72  
-- C++17 compatible compiler  
-- Cargo & Rust toolchains installed  
-- CMake or your preferred build system (for C++ core)
+- C++17 compatible compiler (GCC 7+, Clang 5+, MSVC 2019+)
+- CMake >= 3.16
+- Git
 
 ### Installation
 
-1.Add Omnia to your Cargo.toml
-
-```toml
-[dependencies]
-omnia = "0.1.0"
-````
-
-2.Create a new project
+1.Clone the repository
 
 ```bash
-cargo new my_app --bin
-cd my_app
+git clone https://github.com/your-org/omnia.git
+cd omnia
 ```
 
-3.Write your first GUI app
+2.Build the library
 
-```rust
-use omnia::prelude::*;
+```bash
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake --build . --config Release
+```
 
-fn main() {
-    App::new("Hello Omnia")
-        .window(Window::new().title("Omnia App"))
-        .run();
+3.Create a new project
+
+```bash
+# Create your project directory
+mkdir my_app && cd my_app
+
+# Copy the example CMakeLists.txt or create your own
+# Add Omnia as a subdirectory or installed library
+```
+
+4.Write your first GUI app
+
+```cpp
+#include <omnia/omnia.hpp>
+
+int main() {
+    omnia::App app("Hello Omnia");
+
+    auto window = omnia::Window::create()
+        .title("Omnia App");
+
+    app.add_window(window);
+    return app.run();
 }
 ```
 

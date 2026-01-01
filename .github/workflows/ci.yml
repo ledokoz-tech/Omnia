@@ -8,12 +8,11 @@ on:
   workflow_dispatch:
 
 env:
-  CARGO_TERM_COLOR: always
-  RUST_BACKTRACE: 1
+  BUILD_TYPE: Release
 
 jobs:
   test:
-    name: Test (${{ matrix.os }}, ${{ matrix.rust }})
+    name: Test (${{ matrix.os }}, ${{ matrix.compiler }})
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -22,27 +21,27 @@ jobs:
         include:
           # Linux
           - os: ubuntu-latest
-            rust: stable
+            compiler: gcc
+            cc: gcc
+            cxx: g++
           - os: ubuntu-latest
-            rust: beta
-          - os: ubuntu-latest
-            rust: nightly
+            compiler: clang
+            cc: clang
+            cxx: clang++
           # Windows
           - os: windows-latest
-            rust: stable
+            compiler: msvc
+            cc: cl
+            cxx: cl
           # macOS
           - os: macos-latest
-            rust: stable
+            compiler: clang
+            cc: clang
+            cxx: clang++
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-
-    - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@master
-      with:
-        toolchain: ${{ matrix.rust }}
-        components: rustfmt, clippy
 
     - name: Install system dependencies (Ubuntu)
       if: runner.os == 'Linux'
@@ -65,34 +64,22 @@ jobs:
       run: |
         brew install cmake ninja
 
-    - name: Cache Cargo dependencies
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cargo/registry
-          ~/.cargo/git
-          target
-        key: ${{ runner.os }}-cargo-${{ matrix.rust }}-${{ hashFiles('**/Cargo.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-cargo-${{ matrix.rust }}-
-          ${{ runner.os }}-cargo-
-
-    - name: Check formatting
-      run: cargo fmt --all -- --check
-
-    - name: Run clippy
-      run: cargo clippy --all-targets --all-features -- -D warnings
+    - name: Configure CMake
+      run: |
+        cmake -B build -S . \
+          -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+          -DCMAKE_C_COMPILER=${{ matrix.cc }} \
+          -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+          -DBUILD_EXAMPLES=ON \
+          -DBUILD_TESTS=ON
 
     - name: Build project
-      run: cargo build --verbose
+      run: cmake --build build --config ${{ env.BUILD_TYPE }} --parallel
 
     - name: Run tests
-      run: cargo test --verbose
+      run: ctest --test-dir build --config ${{ env.BUILD_TYPE }} --output-on-failure
 
-    - name: Run tests with all features
-      run: cargo test --all-features --verbose
-
-  # Additional checks that only run on stable Rust
+  # Code Quality checks
   quality:
     name: Code Quality
     runs-on: ubuntu-latest
@@ -101,24 +88,43 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install Rust stable
-      uses: dtolnay/rust-toolchain@stable
-      with:
-        components: rustfmt, clippy
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          cmake \
+          ninja-build \
+          libgtk-3-dev \
+          clang-tidy \
+          cppcheck
 
-    - name: Install cargo-audit
-      run: cargo install cargo-audit
+    - name: Configure CMake
+      run: |
+        cmake -B build -S . \
+          -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+          -DBUILD_EXAMPLES=OFF \
+          -DBUILD_TESTS=OFF
 
-    - name: Security audit
-      run: cargo audit
+    - name: Run clang-tidy
+      run: |
+        find src include -name "*.cpp" -o -name "*.hpp" | \
+        xargs clang-tidy --config-file=.clang-tidy --quiet
+
+    - name: Run cppcheck
+      run: |
+        cppcheck --enable=all --std=c++17 --language=c++ \
+          --suppress=missingIncludeSystem \
+          --suppress=unusedFunction \
+          --suppress=unmatchedSuppression \
+          --inline-suppr \
+          src/ include/ examples/
 
     - name: Check documentation
-      run: cargo doc --no-deps
-
-    - name: Check for unused dependencies
       run: |
-        cargo install cargo-udeps --locked
-        cargo +nightly udeps --all-targets
+        # Check if all public headers have basic documentation
+        find include -name "*.hpp" -exec grep -L "/\*\*" {} \; | wc -l | xargs test 0 -eq
 
   # Cross-platform compilation check
   cross-compile:
@@ -128,7 +134,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - target: aarch64-linux-android
           - target: x86_64-pc-windows-gnu
           - target: x86_64-apple-darwin
 
@@ -136,25 +141,41 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install Rust stable
-      uses: dtolnay/rust-toolchain@stable
-
     - name: Install cross-compilation tools
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-          gcc-aarch64-linux-gnu \
-          g++-aarch64-linux-gnu
+          gcc-mingw-w64 \
+          g++-mingw-w64
 
-    - name: Add targets
+    - name: Install cross-compilation toolchain
+      if: matrix.target == 'x86_64-apple-darwin'
       run: |
-        rustup target add ${{ matrix.target }}
+        # Install osxcross for macOS cross-compilation
+        git clone https://github.com/tpoechtrager/osxcross.git
+        cd osxcross
+        wget -nc https://s3.dockerproject.org/darwin/v2/MacOSX10.11.sdk.tar.xz
+        mv MacOSX10.11.sdk.tar.xz tarballs/
+        UNATTENDED=yes OSX_VERSION_MIN=10.7 ./build.sh
 
-    - name: Install cross
-      run: cargo install cross
+    - name: Configure CMake for cross-compilation
+      run: |
+        if [ "${{ matrix.target }}" = "x86_64-pc-windows-gnu" ]; then
+          cmake -B build -S . \
+            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+            -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/${{ matrix.target }}.cmake \
+            -DBUILD_EXAMPLES=OFF \
+            -DBUILD_TESTS=OFF
+        else
+          cmake -B build -S . \
+            -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} \
+            -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/${{ matrix.target }}.cmake \
+            -DBUILD_EXAMPLES=OFF \
+            -DBUILD_TESTS=OFF
+        fi
 
     - name: Cross-compile
-      run: cross build --target ${{ matrix.target }} --release
+      run: cmake --build build --config ${{ env.BUILD_TYPE }}
 
   # Release checks (only on main branch)
   release-check:
@@ -166,15 +187,24 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install Rust stable
-      uses: dtolnay/rust-toolchain@stable
-
-    - name: Check release build
-      run: cargo build --release
-
-    - name: Check if version is publishable
+    - name: Install system dependencies
       run: |
-        # Check if Cargo.toml has valid version
-        cargo check
-        # Check if package can be published (dry run)
-        cargo publish --dry-run
+        sudo apt-get update
+        sudo apt-get install -y \
+          build-essential \
+          cmake \
+          ninja-build \
+          libgtk-3-dev
+
+    - name: Configure CMake for release
+      run: |
+        cmake -B build -S . \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DBUILD_EXAMPLES=ON \
+          -DBUILD_TESTS=ON
+
+    - name: Build release version
+      run: cmake --build build --config Release
+
+    - name: Run release tests
+      run: ctest --test-dir build --config Release --output-on-failure
