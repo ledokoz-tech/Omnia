@@ -96,7 +96,7 @@ endif()
 
 # Build tests
 option(BUILD_TESTS "Build test programs" ON)
-if(BUILD_TESTS)
+if(BUILD_TESTS AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests")
     add_subdirectory(tests)
 endif()
 
@@ -111,7 +111,7 @@ install(TARGETS omnia
 
 install(DIRECTORY include/ DESTINATION include)
 
-# Generate and install CMake config files
+# Generate and install CMake config files (simplified for now)
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
     "${CMAKE_CURRENT_BINARY_DIR}/omnia-config-version.cmake"
@@ -119,10 +119,9 @@ write_basic_package_version_file(
     COMPATIBILITY SameMajorVersion
 )
 
-configure_package_config_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/omnia-config.cmake.in"
-    "${CMAKE_CURRENT_BINARY_DIR}/omnia-config.cmake"
-    INSTALL_DESTINATION lib/cmake/omnia
+# Create a simple config file
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/omnia-config.cmake"
+"include(\"\${CMAKE_CURRENT_LIST_DIR}/omnia-targets.cmake\")"
 )
 
 install(EXPORT omnia-targets
