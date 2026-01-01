@@ -12,11 +12,11 @@ int main() {
     // Create the main application
     omnia::App app("Hello World");
 
-    // Create a window with title and size
-    auto window = omnia::Window::create()
-        .title("Omnia Hello World")
-        .size(400, 300)
-        .resizable(true);
+// Create a window with title and size
+auto window = omnia::Window::create();
+window->title("Omnia Hello World")
+      ->size(400, 300)
+      ->resizable(true);
 
     // Create UI components
     auto title_text = omnia::Text::create("Hello, Omnia!")
@@ -52,11 +52,11 @@ int main() {
         .add_child(button)
         .add_child(counter);
 
-    // Set the layout as window content
-    window.set_child(vstack);
+// Set the layout as window content
+window->set_child(vstack);
 
-    // Add window to app
-    app.add_window(window);
+// Add window to app
+app.add_window(std::move(window));
 
     // Run the application
     return app.run();

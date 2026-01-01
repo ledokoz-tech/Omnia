@@ -8,7 +8,7 @@ namespace omnia {
 class App::Impl {
 public:
     std::string name;
-    std::vector<Window> windows;
+    std::vector<std::unique_ptr<Window>> windows;
 };
 
 App::App(const std::string& name) : impl_(std::make_unique<Impl>()) {
@@ -17,8 +17,8 @@ App::App(const std::string& name) : impl_(std::make_unique<Impl>()) {
 
 App::~App() = default;
 
-App& App::add_window(const Window& window) {
-    impl_->windows.push_back(window);
+App& App::add_window(std::unique_ptr<Window> window) {
+    impl_->windows.push_back(std::move(window));
     return *this;
 }
 

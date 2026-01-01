@@ -1,6 +1,8 @@
 #include <omnia/utils/color.hpp>
 #include <algorithm>
 #include <stdexcept>
+#include <string>
+#include <cctype>
 
 namespace omnia {
 
@@ -22,7 +24,20 @@ Color Color::from_hex(const std::string& hex) {
         throw std::invalid_argument("Hex color must be 6 or 8 characters");
     }
 
-    unsigned int value = std::stoul(hex_value, nullptr, 16);
+    // Simple hex parsing without stoul
+    unsigned int value = 0;
+    for (char c : hex_value) {
+        value *= 16;
+        if (c >= '0' && c <= '9') {
+            value += c - '0';
+        } else if (c >= 'A' && c <= 'F') {
+            value += c - 'A' + 10;
+        } else if (c >= 'a' && c <= 'f') {
+            value += c - 'a' + 10;
+        } else {
+            throw std::invalid_argument("Invalid hex character");
+        }
+    }
 
     float r = ((value >> 16) & 0xFF) / 255.0f;
     float g = ((value >> 8) & 0xFF) / 255.0f;

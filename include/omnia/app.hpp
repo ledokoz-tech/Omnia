@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <utility>
 
 namespace omnia {
 
@@ -22,7 +23,7 @@ public:
     /**
      * Add a window to the application.
      */
-    App& add_window(const Window& window);
+    App& add_window(std::unique_ptr<Window> window);
 
     /**
      * Run the application main loop.

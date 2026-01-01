@@ -16,14 +16,15 @@ public:
      * Build the view. Subclasses should override this method.
      * Returns a view that can be displayed.
      */
-    virtual std::shared_ptr<View> build() { return shared_from_this(); }
+    virtual std::shared_ptr<View> build() { return std::shared_ptr<View>(this); }
 
 protected:
     /**
-     * Get a shared pointer to this view.
+     * Get a shared pointer to this view (for subclasses that properly manage lifetime).
+     * This is a helper for subclasses that inherit from enable_shared_from_this.
      */
-    std::shared_ptr<View> shared_from_this() {
-        return std::static_pointer_cast<View>(std::shared_from_this());
+    virtual std::shared_ptr<View> shared_from_this() {
+        return std::shared_ptr<View>(this);
     }
 };
 

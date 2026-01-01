@@ -15,7 +15,7 @@ public:
     /**
      * Create a new window builder.
      */
-    static Window create();
+    static std::unique_ptr<Window> create();
 
     /**
      * Set the window title.

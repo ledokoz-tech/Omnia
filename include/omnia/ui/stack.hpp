@@ -1,6 +1,7 @@
 #pragma once
 
 #include <omnia/view.hpp>
+#include <omnia/utils/geometry.hpp>
 #include <vector>
 #include <memory>
 

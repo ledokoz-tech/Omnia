@@ -12,9 +12,9 @@ public:
     std::shared_ptr<View> child;
 };
 
-Window Window::create() {
-    Window window;
-    window.impl_ = std::make_unique<Impl>();
+std::unique_ptr<Window> Window::create() {
+    auto window = std::make_unique<Window>();
+    window->impl_ = std::make_unique<Impl>();
     return window;
 }
 
