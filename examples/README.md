@@ -19,7 +19,9 @@ cargo run --example hello_world
 ## Available Examples
 
 ### hello_world.rs
+
 A basic "Hello World" application demonstrating:
+
 - Creating windows
 - Basic layout with VStack and HStack
 - Text rendering with styling
@@ -28,6 +30,7 @@ A basic "Hello World" application demonstrating:
 - Custom components
 
 **Run with:**
+
 ```bash
 cargo run --example hello_world
 ```
@@ -35,9 +38,11 @@ cargo run --example hello_world
 ## Example Categories
 
 ### Basic Examples
+
 - `hello_world.rs` - Getting started with basic UI components
 
 ### Advanced Examples (Coming Soon)
+
 - `todo_app.rs` - A complete todo application with data persistence
 - `calculator.rs` - A calculator with custom styling
 - `file_browser.rs` - File system browser with tree view
@@ -45,6 +50,7 @@ cargo run --example hello_world
 - `drawing_app.rs` - Canvas-based drawing application
 
 ### Platform-Specific Examples (Coming Soon)
+
 - `windows_integration.rs` - Windows-specific features
 - `macos_integration.rs` - macOS-specific features
 - `mobile_ui.rs` - Mobile-optimized UI patterns

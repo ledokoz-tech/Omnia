@@ -9,9 +9,11 @@ Before you begin, ensure you have the following installed:
 ### Required
 
 - **Rust**: Version 1.72 or higher
+
   ```bash
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
   ```
+
 - **C++ Compiler**: C++17 compatible compiler
   - **Linux**: GCC 9+ or Clang 10+
   - **macOS**: Xcode Command Line Tools (Clang)
@@ -34,6 +36,7 @@ cd Omnia
 ### 2. Build Dependencies
 
 **Linux (Ubuntu/Debian):**
+
 ```bash
 sudo apt update
 sudo apt install build-essential cmake ninja-build \
@@ -43,11 +46,13 @@ sudo apt install build-essential cmake ninja-build \
 ```
 
 **macOS:**
+
 ```bash
 brew install cmake ninja
 ```
 
 **Windows (using MSVC):**
+
 ```bash
 # Install Visual Studio Build Tools with C++ support
 # CMake will be downloaded automatically by Cargo
@@ -118,7 +123,7 @@ cargo run
 
 A typical Omnia project looks like this:
 
-```
+```shell
 my-omnia-app/
 ├── Cargo.toml
 ├── src/
@@ -146,25 +151,31 @@ Now that you have a basic Omnia application running, here are some next steps:
 ### Build Errors
 
 **Missing C++ compiler:**
-```
+
+```shell
 error: linker `cc` not found
 ```
+
 **Solution**: Install a C++ compiler (see Prerequisites section)
 
 **Missing system dependencies:**
-```
+
+```shell
 error: failed to run custom build command for `omnia v0.1.0`
 ```
+
 **Solution**: Install required system libraries (see installation steps)
 
 ### Runtime Issues
 
 **Application doesn't start:**
+
 - Check that all required dynamic libraries are available
 - Ensure you're running on a supported platform
 - Try running in debug mode for more detailed error messages
 
 **UI doesn't render correctly:**
+
 - Verify your graphics drivers are up to date
 - Check that your system supports OpenGL 3.3+
 - Try running with software rendering: `OMNIA_RENDERER=software cargo run`

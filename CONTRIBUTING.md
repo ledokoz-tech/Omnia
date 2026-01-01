@@ -31,11 +31,14 @@ Before you begin, ensure you have the following installed:
 
 1. Fork the repository on GitHub
 2. Clone your fork locally:
+
    ```bash
    git clone https://github.com/your-username/Omnia.git
    cd Omnia
    ```
+
 3. Add the upstream remote:
+
    ```bash
    git remote add upstream https://github.com/ledokoz-tech/Omnia.git
    ```
@@ -47,16 +50,19 @@ Before you begin, ensure you have the following installed:
 1. **Clone the repository** (see above)
 
 2. **Build the project**:
+
    ```bash
    cargo build
    ```
 
 3. **Run tests**:
+
    ```bash
    cargo test
    ```
 
 4. **Run examples**:
+
    ```bash
    cargo run --example hello_world
    ```
@@ -64,6 +70,7 @@ Before you begin, ensure you have the following installed:
 ### Development Workflow
 
 1. Create a feature branch from `main`:
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -71,6 +78,7 @@ Before you begin, ensure you have the following installed:
 2. Make your changes following our [coding standards](#coding-standards)
 
 3. Run tests and ensure everything passes:
+
    ```bash
    cargo test
    cargo clippy
@@ -78,11 +86,13 @@ Before you begin, ensure you have the following installed:
    ```
 
 4. Commit your changes:
+
    ```bash
    git commit -m "feat: add your feature description"
    ```
 
 5. Push to your fork:
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -91,7 +101,7 @@ Before you begin, ensure you have the following installed:
 
 ## Project Structure
 
-```
+```shell
 Omnia/
 ├── src/                    # Rust source code
 │   ├── core/              # Core GUI functionality
@@ -122,7 +132,7 @@ Omnia/
 
 We follow [Conventional Commits](https://conventionalcommits.org/) specification:
 
-```
+```shell
 type(scope): description
 
 [optional body]
@@ -131,6 +141,7 @@ type(scope): description
 ```
 
 Types:
+
 - `feat`: New features
 - `fix`: Bug fixes
 - `docs`: Documentation changes
@@ -140,7 +151,8 @@ Types:
 - `chore`: Maintenance tasks
 
 Examples:
-```
+
+```shell
 feat: add window resizing support
 fix(ui): resolve button click handler bug
 docs: update API documentation

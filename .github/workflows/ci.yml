@@ -96,7 +96,6 @@ jobs:
   quality:
     name: Code Quality
     runs-on: ubuntu-latest
-    if: runner.os == 'Linux' && matrix.rust == 'stable'
 
     steps:
     - name: Checkout code
