@@ -14,7 +14,7 @@ public:
     /**
      * Create a new text component.
      */
-    static Text create(const std::string& text);
+    static std::shared_ptr<Text> create(const std::string& text);
 
     /**
      * Set the font size.

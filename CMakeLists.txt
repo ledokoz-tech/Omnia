@@ -10,26 +10,39 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 include(CTest)
 enable_testing()
 
-# Find packages
-find_package(PkgConfig REQUIRED)
+# GUI support option
+option(ENABLE_GUI "Enable GUI components" ON)
+
+# Find packages (only if GUI is enabled)
+if(ENABLE_GUI)
+    find_package(PkgConfig REQUIRED)
+endif()
 
 # Platform-specific GUI libraries
-if(WIN32)
-    # Windows GUI libraries
-    find_package(OpenGL REQUIRED)
-    # For Windows, we'll use a combination of native APIs and cross-platform libraries
-elseif(APPLE)
-    # macOS GUI libraries
-    find_library(COCOA_LIBRARY Cocoa)
-    find_library(OPENGL_LIBRARY OpenGL)
-    find_library(CORE_FOUNDATION CoreFoundation)
-elseif(UNIX AND NOT APPLE)
-    # Linux GUI libraries (GTK-based)
-    pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
-    pkg_check_modules(WEBKIT2GTK REQUIRED webkit2gtk-4.1)
-    pkg_check_modules(LIBAPPINDICATOR REQUIRED ayatana-appindicator3-0.1)
-    pkg_check_modules(LIBRSVG REQUIRED librsvg-2.0)
-    pkg_check_modules(LIBASOUND REQUIRED alsa)
+if(ENABLE_GUI)
+    if(WIN32)
+        # Windows GUI libraries
+        find_package(OpenGL REQUIRED)
+        # For Windows, we'll use a combination of native APIs and cross-platform libraries
+    elseif(APPLE)
+        # macOS GUI libraries
+        find_library(COCOA_LIBRARY Cocoa)
+        find_library(OPENGL_LIBRARY OpenGL)
+        find_library(CORE_FOUNDATION CoreFoundation)
+    elseif(UNIX AND NOT APPLE)
+        # Linux GUI libraries (GTK-based)
+        pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
+
+        # Try WebKitGTK 4.1 first, fallback to 4.0 if not available
+        pkg_check_modules(WEBKIT2GTK webkit2gtk-4.1)
+        if(NOT WEBKIT2GTK_FOUND)
+            pkg_check_modules(WEBKIT2GTK REQUIRED webkit2gtk-4.0)
+        endif()
+
+        pkg_check_modules(LIBAPPINDICATOR ayatana-appindicator3-0.1)
+        pkg_check_modules(LIBRSVG REQUIRED librsvg-2.0)
+        pkg_check_modules(LIBASOUND REQUIRED alsa)
+    endif()
 endif()
 
 # Create library target
@@ -53,32 +66,34 @@ target_include_directories(omnia PUBLIC
 )
 
 # Platform-specific link libraries
-if(WIN32)
-    target_link_libraries(omnia PUBLIC
-        OpenGL::GL
-        # Windows-specific libraries would go here
-    )
-elseif(APPLE)
-    target_link_libraries(omnia PUBLIC
-        ${COCOA_LIBRARY}
-        ${OPENGL_LIBRARY}
-        ${CORE_FOUNDATION}
-    )
-elseif(UNIX AND NOT APPLE)
-    target_link_libraries(omnia PUBLIC
-        ${GTK3_LIBRARIES}
-        ${WEBKIT2GTK_LIBRARIES}
-        ${LIBAPPINDICATOR_LIBRARIES}
-        ${LIBRSVG_LIBRARIES}
-        ${LIBASOUND_LIBRARIES}
-    )
-    target_include_directories(omnia PUBLIC
-        ${GTK3_INCLUDE_DIRS}
-        ${WEBKIT2GTK_INCLUDE_DIRS}
-        ${LIBAPPINDICATOR_INCLUDE_DIRS}
-        ${LIBRSVG_INCLUDE_DIRS}
-        ${LIBASOUND_INCLUDE_DIRS}
-    )
+if(ENABLE_GUI)
+    if(WIN32)
+        target_link_libraries(omnia PUBLIC
+            OpenGL::GL
+            # Windows-specific libraries would go here
+        )
+    elseif(APPLE)
+        target_link_libraries(omnia PUBLIC
+            ${COCOA_LIBRARY}
+            ${OPENGL_LIBRARY}
+            ${CORE_FOUNDATION}
+        )
+    elseif(UNIX AND NOT APPLE)
+        target_link_libraries(omnia PUBLIC
+            ${GTK3_LIBRARIES}
+            ${WEBKIT2GTK_LIBRARIES}
+            ${LIBAPPINDICATOR_LIBRARIES}
+            ${LIBRSVG_LIBRARIES}
+            ${LIBASOUND_LIBRARIES}
+        )
+        target_include_directories(omnia PUBLIC
+            ${GTK3_INCLUDE_DIRS}
+            ${WEBKIT2GTK_INCLUDE_DIRS}
+            ${LIBAPPINDICATOR_INCLUDE_DIRS}
+            ${LIBRSVG_INCLUDE_DIRS}
+            ${LIBASOUND_INCLUDE_DIRS}
+        )
+    endif()
 endif()
 
 # Compiler warnings and optimizations
