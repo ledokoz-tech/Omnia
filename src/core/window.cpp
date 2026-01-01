@@ -3,15 +3,6 @@
 
 namespace omnia {
 
-class Window::Impl {
-public:
-    std::string title = "Omnia Window";
-    int width = 800;
-    int height = 600;
-    bool resizable = true;
-    std::shared_ptr<View> child;
-};
-
 std::unique_ptr<Window> Window::create() {
     auto window = std::make_unique<Window>();
     window->impl_ = std::make_unique<Impl>();

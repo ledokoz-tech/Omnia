@@ -45,7 +45,13 @@ public:
     std::shared_ptr<View> child() const;
 
 private:
-    class Impl;
+    struct Impl {
+        std::string title = "Omnia Window";
+        int width = 800;
+        int height = 600;
+        bool resizable = true;
+        std::shared_ptr<View> child;
+    };
     std::unique_ptr<Impl> impl_;
 };
 
