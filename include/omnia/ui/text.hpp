@@ -14,22 +14,22 @@ public:
     /**
      * Create a new text component.
      */
-    static std::shared_ptr<Text> create(const std::string& text);
+    static Text create(const std::string& text);
 
     /**
      * Set the font size.
      */
-    Text& font_size(float size);
+    std::shared_ptr<Text> font_size(float size);
 
     /**
      * Set whether the text is bold.
      */
-    Text& bold(bool bold);
+    std::shared_ptr<Text> bold(bool bold);
 
     /**
      * Set the text color.
      */
-    Text& color(const Color& color);
+    std::shared_ptr<Text> color(const Color& color);
 
     // Getters
     const std::string& text() const;

@@ -9,29 +9,29 @@ std::shared_ptr<VStack> VStack::create() {
 
 VStack::VStack() = default;
 
-VStack& VStack::spacing(float spacing) {
+std::shared_ptr<VStack> VStack::spacing(float spacing) {
     spacing_ = spacing;
-    return *this;
+    return std::static_pointer_cast<VStack>(shared_from_this());
 }
 
-VStack& VStack::padding(float padding) {
+std::shared_ptr<VStack> VStack::padding(float padding) {
     padding_ = EdgeInsets::all(padding);
-    return *this;
+    return std::static_pointer_cast<VStack>(shared_from_this());
 }
 
-VStack& VStack::padding(const EdgeInsets& padding) {
+std::shared_ptr<VStack> VStack::padding(const EdgeInsets& padding) {
     padding_ = padding;
-    return *this;
+    return std::static_pointer_cast<VStack>(shared_from_this());
 }
 
-VStack& VStack::alignment(Alignment alignment) {
+std::shared_ptr<VStack> VStack::alignment(Alignment alignment) {
     alignment_ = alignment;
-    return *this;
+    return std::static_pointer_cast<VStack>(shared_from_this());
 }
 
-VStack& VStack::add_child(const std::shared_ptr<View>& child) {
+std::shared_ptr<VStack> VStack::add_child(const std::shared_ptr<View>& child) {
     children_.push_back(child);
-    return *this;
+    return std::static_pointer_cast<VStack>(shared_from_this());
 }
 
 float VStack::spacing() const { return spacing_; }
@@ -46,29 +46,29 @@ std::shared_ptr<HStack> HStack::create() {
 
 HStack::HStack() = default;
 
-HStack& HStack::spacing(float spacing) {
+std::shared_ptr<HStack> HStack::spacing(float spacing) {
     spacing_ = spacing;
-    return *this;
+    return std::static_pointer_cast<HStack>(shared_from_this());
 }
 
-HStack& HStack::padding(float padding) {
+std::shared_ptr<HStack> HStack::padding(float padding) {
     padding_ = EdgeInsets::all(padding);
-    return *this;
+    return std::static_pointer_cast<HStack>(shared_from_this());
 }
 
-HStack& HStack::padding(const EdgeInsets& padding) {
+std::shared_ptr<HStack> HStack::padding(const EdgeInsets& padding) {
     padding_ = padding;
-    return *this;
+    return std::static_pointer_cast<HStack>(shared_from_this());
 }
 
-HStack& HStack::alignment(Alignment alignment) {
+std::shared_ptr<HStack> HStack::alignment(Alignment alignment) {
     alignment_ = alignment;
-    return *this;
+    return std::static_pointer_cast<HStack>(shared_from_this());
 }
 
-HStack& HStack::add_child(const std::shared_ptr<View>& child) {
+std::shared_ptr<HStack> HStack::add_child(const std::shared_ptr<View>& child) {
     children_.push_back(child);
-    return *this;
+    return std::static_pointer_cast<HStack>(shared_from_this());
 }
 
 float HStack::spacing() const { return spacing_; }

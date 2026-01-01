@@ -8,19 +8,19 @@ std::shared_ptr<Text> Text::create(const std::string& text) {
 
 Text::Text(const std::string& text) : text_(text) {}
 
-Text& Text::font_size(float size) {
+std::shared_ptr<Text> Text::font_size(float size) {
     font_size_ = size;
-    return *this;
+    return std::static_pointer_cast<Text>(shared_from_this());
 }
 
-Text& Text::bold(bool bold) {
+std::shared_ptr<Text> Text::bold(bool bold) {
     bold_ = bold;
-    return *this;
+    return std::static_pointer_cast<Text>(shared_from_this());
 }
 
-Text& Text::color(const Color& color) {
+std::shared_ptr<Text> Text::color(const Color& color) {
     color_ = color;
-    return *this;
+    return std::static_pointer_cast<Text>(shared_from_this());
 }
 
 const std::string& Text::text() const { return text_; }

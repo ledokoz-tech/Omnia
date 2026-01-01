@@ -27,27 +27,27 @@ public:
     /**
      * Set the spacing between children.
      */
-    VStack& spacing(float spacing);
+    std::shared_ptr<VStack> spacing(float spacing);
 
     /**
      * Set the padding around the stack.
      */
-    VStack& padding(float padding);
+    std::shared_ptr<VStack> padding(float padding);
 
     /**
      * Set the padding with EdgeInsets.
      */
-    VStack& padding(const EdgeInsets& padding);
+    std::shared_ptr<VStack> padding(const EdgeInsets& padding);
 
     /**
      * Set the alignment of children.
      */
-    VStack& alignment(Alignment alignment);
+    std::shared_ptr<VStack> alignment(Alignment alignment);
 
     /**
      * Add a child view.
      */
-    VStack& add_child(const std::shared_ptr<View>& child);
+    std::shared_ptr<VStack> add_child(const std::shared_ptr<View>& child);
 
     // Getters
     float spacing() const;
@@ -77,27 +77,27 @@ public:
     /**
      * Set the spacing between children.
      */
-    HStack& spacing(float spacing);
+    std::shared_ptr<HStack> spacing(float spacing);
 
     /**
      * Set the padding around the stack.
      */
-    HStack& padding(float padding);
+    std::shared_ptr<HStack> padding(float padding);
 
     /**
      * Set the padding with EdgeInsets.
      */
-    HStack& padding(const EdgeInsets& padding);
+    std::shared_ptr<HStack> padding(const EdgeInsets& padding);
 
     /**
      * Set the alignment of children.
      */
-    HStack& alignment(Alignment alignment);
+    std::shared_ptr<HStack> alignment(Alignment alignment);
 
     /**
      * Add a child view.
      */
-    HStack& add_child(const std::shared_ptr<View>& child);
+    std::shared_ptr<HStack> add_child(const std::shared_ptr<View>& child);
 
     // Getters
     float spacing() const;

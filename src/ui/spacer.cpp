@@ -8,14 +8,14 @@ std::shared_ptr<Spacer> Spacer::create() {
 
 Spacer::Spacer() = default;
 
-Spacer& Spacer::width(float width) {
+std::shared_ptr<Spacer> Spacer::width(float width) {
     width_ = width;
-    return *this;
+    return std::static_pointer_cast<Spacer>(shared_from_this());
 }
 
-Spacer& Spacer::height(float height) {
+std::shared_ptr<Spacer> Spacer::height(float height) {
     height_ = height;
-    return *this;
+    return std::static_pointer_cast<Spacer>(shared_from_this());
 }
 
 float Spacer::width() const { return width_; }

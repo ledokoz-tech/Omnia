@@ -21,27 +21,27 @@ public:
     /**
      * Set the click handler function.
      */
-    Button& on_click(std::function<void()> handler);
+    std::shared_ptr<Button> on_click(std::function<void()> handler);
 
     /**
      * Set the button padding.
      */
-    Button& padding(const EdgeInsets& padding);
+    std::shared_ptr<Button> padding(const EdgeInsets& padding);
 
     /**
      * Set the background color.
      */
-    Button& background_color(const Color& color);
+    std::shared_ptr<Button> background_color(const Color& color);
 
     /**
      * Set the corner radius.
      */
-    Button& corner_radius(float radius);
+    std::shared_ptr<Button> corner_radius(float radius);
 
     /**
      * Set whether the button is disabled.
      */
-    Button& disabled(bool disabled);
+    std::shared_ptr<Button> disabled(bool disabled);
 
     // Getters
     const std::string& text() const;

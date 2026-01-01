@@ -8,29 +8,29 @@ std::shared_ptr<Button> Button::create(const std::string& text) {
 
 Button::Button(const std::string& text) : text_(text) {}
 
-Button& Button::on_click(std::function<void()> handler) {
+std::shared_ptr<Button> Button::on_click(std::function<void()> handler) {
     on_click_handler_ = std::move(handler);
-    return *this;
+    return std::static_pointer_cast<Button>(shared_from_this());
 }
 
-Button& Button::padding(const EdgeInsets& padding) {
+std::shared_ptr<Button> Button::padding(const EdgeInsets& padding) {
     padding_ = padding;
-    return *this;
+    return std::static_pointer_cast<Button>(shared_from_this());
 }
 
-Button& Button::background_color(const Color& color) {
+std::shared_ptr<Button> Button::background_color(const Color& color) {
     background_color_ = color;
-    return *this;
+    return std::static_pointer_cast<Button>(shared_from_this());
 }
 
-Button& Button::corner_radius(float radius) {
+std::shared_ptr<Button> Button::corner_radius(float radius) {
     corner_radius_ = radius;
-    return *this;
+    return std::static_pointer_cast<Button>(shared_from_this());
 }
 
-Button& Button::disabled(bool disabled) {
+std::shared_ptr<Button> Button::disabled(bool disabled) {
     disabled_ = disabled;
-    return *this;
+    return std::static_pointer_cast<Button>(shared_from_this());
 }
 
 const std::string& Button::text() const { return text_; }

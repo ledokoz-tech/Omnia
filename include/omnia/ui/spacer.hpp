@@ -17,12 +17,12 @@ public:
     /**
      * Set the width of the spacer.
      */
-    Spacer& width(float width);
+    std::shared_ptr<Spacer> width(float width);
 
     /**
      * Set the height of the spacer.
      */
-    Spacer& height(float height);
+    std::shared_ptr<Spacer> height(float height);
 
     // Getters
     float width() const;
